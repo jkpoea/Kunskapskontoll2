@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 const hands = ["rock", "paper", "scissors"];
 
 function App() {
@@ -10,24 +10,38 @@ function App() {
   const [matchWinner, setMatchWinner] = useState("");
   const [rounds, setRounds] = useState(0);
 
+  //Metod som tar input och sätter antal runder man spelar.
   const inputRef = React.createRef();
 
   const setLimit = (e) => {
     e.preventDefault();
     const inputLimit = inputRef.current.value;
     setRounds(inputLimit);
-    console.log(typeof rounds);
   };
+
+  //Metod som kallar fram matchVictor
+  const checkMatch = () => {
+    setMatchWinner(matchVictor(playerScore, cpuScore, rounds));
+  };
+
+  /*Metoden sätter händer för båda spelare och 
+  sen kollar vem som har vunnit rundan med roundScore och sätter vinnaren,
+  samt kollar om någon har vunnit spelet med checkMatch.
+  */
   const selectingHand = (hand) => {
+    checkMatch();
     const handPlayer = hand;
     const handCPU = hands[Math.floor(Math.random() * 3)];
     setPlayerHand(handPlayer);
     setCpuHand(handCPU);
-    setRoundWinner(findWinner(handPlayer, handCPU));
-    setMatchWinner(setPoint(playerScore, cpuScore, rounds));
+    setRoundWinner(roundScore(handPlayer, handCPU));
   };
 
-  const findWinner = (player1, player2) => {
+  /* 
+  Logiken bakom roundScore
+  */
+
+  const roundScore = (player1, player2) => {
     if (player1 === player2) {
       return "DRAW";
     } else if (
@@ -43,7 +57,10 @@ function App() {
     }
   };
 
-  const setPoint = (p1Score, p2Score, round) => {
+  /* 
+    Logiken bakom matchVictor.
+  */
+  const matchVictor = (p1Score, p2Score, round) => {
     round = Number(round);
     if (p1Score === round) {
       return "YOU WIN";
@@ -53,9 +70,10 @@ function App() {
       return "THE GAME CONTINUES...";
     }
   };
-
+  // renders
   return (
     <div className="App">
+      <p>Set match limit first</p>
       <form>
         <input ref={inputRef} />
         <button onClick={setLimit}>Set limit</button>
